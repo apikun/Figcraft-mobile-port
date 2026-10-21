@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0e11">
+<meta name="description" content="FigCraft — open-source interface design and prototyping built in pure Rust, running in your browser and on mobile.">
+<title>FigCraft Web — Interface Design &amp; Prototyping</title>
+<link rel="icon" href="artcraft-mark.png">
+<style>
+  :root { --accent:#0EA5C6; --accent-dark:#05242b; --bg:#0b0e11; --card:rgba(255,255,255,.04); --border:rgba(255,255,255,.1); --muted:#a1a1aa; --dim:#71717a; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:#f4f4f5; font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1024px; margin:0 auto; padding:0 20px; }
+  header { position:sticky; top:0; z-index:40; background:rgba(11,14,17,.85); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .nav { display:flex; align-items:center; justify-content:space-between; height:56px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:600; }
+  .brand img { width:28px; height:28px; border-radius:6px; }
+  .badge { font-size:11px; font-weight:500; color:#67d6ec; background:rgba(14,165,198,.1); border:1px solid rgba(14,165,198,.4); border-radius:999px; padding:2px 8px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:12px; text-decoration:none; font-weight:600; cursor:pointer; border:0; transition:background .15s, border-color .15s; }
+  .btn-primary { background:var(--accent); color:var(--accent-dark); }
+  .btn-primary:hover { background:#3cbddd; }
+  .btn-ghost { background:rgba(255,255,255,.05); color:#f4f4f5; border:1px solid rgba(255,255,255,.15); font-weight:500; }
+  .btn-ghost:hover { background:rgba(255,255,255,.1); }
+  .btn-sm { height:36px; padding:0 14px; font-size:14px; border-radius:9px; }
+  .btn-lg { height:48px; padding:0 28px; font-size:16px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+  .chip { font-size:12px; font-weight:500; color:#d4d4d8; background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:999px; padding:4px 12px; }
+  .hero { position:relative; overflow:hidden; border-bottom:1px solid var(--border); text-align:center; }
+  .hero::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 60% 50% at 50% -10%, rgba(14,165,198,.18), transparent); pointer-events:none; }
+  .hero .wrap { position:relative; padding:56px 20px 72px; }
+  h1 { font-size:clamp(28px,6vw,48px); line-height:1.12; letter-spacing:-.02em; max-width:680px; margin:20px auto 0; }
+  h1 span { color:var(--accent); }
+  .hero p { color:var(--muted); max-width:600px; margin:16px auto 0; font-size:15px; }
+  .cta { display:flex; flex-direction:column; gap:12px; margin-top:28px; }
+  .hint { margin-top:16px; font-size:12px; color:var(--dim); }
+  section { border-bottom:1px solid var(--border); padding:48px 0; }
+  h2 { font-size:clamp(20px,3.5vw,24px); letter-spacing:-.01em; display:flex; align-items:center; gap:10px; }
+  .sub { color:var(--muted); font-size:14px; margin-top:8px; max-width:640px; }
+  .grid { display:grid; gap:16px; margin-top:24px; }
+  @media(min-width:640px){ .grid-2{grid-template-columns:1fr 1fr;} .grid-3{grid-template-columns:repeat(3,1fr);} .grid-4{grid-template-columns:repeat(4,1fr);} .cta{flex-direction:row; justify-content:center;} }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; transition:border-color .15s; }
+  .card:hover { border-color:rgba(14,165,198,.3); }
+  .icon { width:36px; height:36px; border-radius:10px; background:rgba(14,165,198,.15); display:flex; align-items:center; justify-content:center; font-size:17px; }
+  .card h3 { font-size:14px; margin-top:12px; }
+  .card p { font-size:13px; color:var(--muted); margin-top:6px; line-height:1.55; }
+  figure { margin:0; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:rgba(255,255,255,.03); }
+  figure img { width:100%; aspect-ratio:16/10; object-fit:cover; object-position:top; display:block; }
+  figcaption { border-top:1px solid var(--border); padding:10px 16px; font-size:13px; color:var(--muted); }
+  .band { text-align:center; padding:56px 0; border-bottom:0; }
+  footer { border-top:1px solid var(--border); padding:32px 0 40px; }
+  .foot { display:flex; flex-direction:column; gap:24px; }
+  @media(min-width:640px){ .foot{flex-direction:row; justify-content:space-between; align-items:flex-start;} }
+  .foot .about { max-width:460px; }
+  .foot .about .brand { font-size:14px; }
+  .foot .about .brand img { width:20px; height:20px; }
+  .foot p { font-size:12px; color:var(--dim); margin-top:8px; line-height:1.6; }
+  .foot nav { display:flex; flex-direction:column; gap:8px; font-size:12px; }
+  .foot a { color:var(--muted); text-decoration:none; }
+  .foot a:hover { color:var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <img src="artcraft-mark.png" alt="ArtCraft mark">
+      FigCraft <span class="badge">web port</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:12px;color:var(--dim);">v0.8.0</span>
+      <a class="btn btn-primary btn-sm" href="figcraft/index.html">&#9654; Launch</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="chips">
+        <span class="chip">Open source</span><span class="chip">100% Rust</span><span class="chip">Runs offline</span>
+      </div>
+      <h1>Interface design and prototyping — <span>in your browser</span>.</h1>
+      <p>The open-source design tool from the ArtCraft community, ported to the web as a WebAssembly
+         app and tuned for touch. Frames, auto layout, components, vector networks, styles, variables
+         and prototypes — all on your phone.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="figcraft/index.html">&#9654; Launch Editor</a>
+        <a class="btn btn-ghost btn-lg" href="figcraft/index.html" target="_blank" rel="noopener">Open standalone ↗</a>
+      </div>
+      <p class="hint">WebGPU with WebGL2 fallback · ~7 MB download, cached after first load</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>📱 Made to work on mobile</h2>
+      <p class="sub">The stock web build isn't touch-first, so this port adds a gesture adapter that
+         translates multi-finger input into the engine's native mouse and zoom pathways.</p>
+      <div class="grid grid-4">
+        <div class="card"><div class="icon">👆</div><h3>One finger</h3><p>Tap to select, drag to move shapes and drag on empty canvas to marquee-select — just like a mouse.</p></div>
+        <div class="card"><div class="icon">🤏</div><h3>Pinch to zoom</h3><p>Two fingers pinch or spread zooms the canvas smoothly, mapped to the engine's native zoom input.</p></div>
+        <div class="card"><div class="icon">✌️</div><h3>Two-finger pan</h3><p>Slide two fingers to pan the canvas. The gesture adapter drives the engine's middle-button pan path.</p></div>
+        <div class="card"><div class="icon">📲</div><h3>Built for small screens</h3><p>The editor fills the viewport edge-to-edge with browser zoom and rubber-band scrolling locked out.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Built with the real engine</h2>
+      <p class="sub">Every screen below ships as an example file in the repository and renders live in the editor.</p>
+      <div class="grid grid-2">
+        <figure><img src="screenshots/shot-1-hero.png" alt="FigCraft dark theme editing the Ridgeline hiking app with auto layout layers and variable-bound fills" loading="lazy"><figcaption>Auto layout screens with theme variable modes</figcaption></figure>
+        <figure><img src="screenshots/shot-2-components.png" alt="Component panel showing variants and instances in FigCraft" loading="lazy"><figcaption>Components &amp; variants at work</figcaption></figure>
+        <figure><img src="screenshots/shot-5-vector.png" alt="Vector editing with pen tool and anchor points in FigCraft" loading="lazy"><figcaption>Vector networks &amp; the pen tool</figcaption></figure>
+        <figure><img src="screenshots/shot-6-dashboard-light.png" alt="Ridgeline studio dashboard design in light mode" loading="lazy"><figcaption>Dashboards built from shared styles</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>⚡ Everything in the toolkit</h2>
+      <div class="grid grid-3">
+        <div class="card"><div class="icon">▦</div><h3>Frames &amp; auto layout</h3><p>Responsive layouts with hug/fill sizing, nested containers and padding controls that reflow as you edit.</p></div>
+        <div class="card"><div class="icon">⧉</div><h3>Components &amp; variants</h3><p>Reusable main components with instances, overrides and variant switching across your whole document.</p></div>
+        <div class="card"><div class="icon">✎</div><h3>Vector networks</h3><p>A full vector editor: pen tool, boolean operations, corner radius, width profiles and path editing.</p></div>
+        <div class="card"><div class="icon">◐</div><h3>Styles &amp; variables</h3><p>Shared colour, text and effect styles plus variables with modes — one set of tokens, light and dark.</p></div>
+        <div class="card"><div class="icon">▷</div><h3>Prototyping</h3><p>Wire flows with interactions, then present them right in the browser with responsive previews.</p></div>
+        <div class="card"><div class="icon">⤓</div><h3>Figma import</h3><p>Open .fig files directly — the engine reads Figma's Kiwi-serialized document format natively.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2 style="justify-content:center;">Ready to design?</h2>
+      <p class="sub" style="margin-left:auto;margin-right:auto;">Launch the editor and start a new document — it opens instantly and keeps working offline.</p>
+      <div class="cta" style="margin-top:24px;">
+        <a class="btn btn-primary btn-lg" href="figcraft/index.html">&#9654; Launch FigCraft</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="about">
+      <div class="brand"><img src="artcraft-mark.png" alt="">FigCraft Web</div>
+      <p>An unofficial mobile-first port serving the official prebuilt web release (v0.8.0) of
+         storytold/figcraft. FigCraft is a community project by ArtCraft — all engine credit goes
+         to its contributors.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="https://github.com/storytold/figcraft" target="_blank" rel="noopener">GitHub repository ↗</a>
+      <a href="https://getartcraft.com/apps/figcraft" target="_blank" rel="noopener">getartcraft.com ↗</a>
+      <span style="color:var(--dim);">MIT OR Apache-2.0 · WASM engine unchanged</span>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

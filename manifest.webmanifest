@@ -1,0 +1,17 @@
+{
+  "name": "FigCraft Web — Interface Design & Prototyping",
+  "short_name": "FigCraft",
+  "description": "Open-source, collaborative interface design and prototyping tool built in pure Rust, running in your browser and on mobile.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0e11",
+  "theme_color": "#0EA5C6",
+  "icons": [
+    {
+      "src": "/artcraft-mark.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
